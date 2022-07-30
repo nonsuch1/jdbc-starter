@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/jdbc-starter.iml" filepath="$PROJECT_DIR$/jdbc-starter.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jdbc-starter-training/jdbc-starter-training.iml" filepath="$PROJECT_DIR$/jdbc-starter-training/jdbc-starter-training.iml" />
     </modules>
   </component>
 </project>
