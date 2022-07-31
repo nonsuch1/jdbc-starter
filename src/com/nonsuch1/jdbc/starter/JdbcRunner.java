@@ -3,6 +3,7 @@ package com.nonsuch1.jdbc.starter;
 import com.nonsuch1.jdbc.starter.util.ConnectionManager;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,8 +19,27 @@ public class JdbcRunner {
         Long flightId = 2L;
 //        List<Long> result = getTicketsByFlightId(flightId);
 //        System.out.println(result);
-        List<Long> result = getFlightsBetween(LocalDate.of(2020, 10, 1).atStartOfDay(), LocalDateTime.now());
-        System.out.println(result);
+//        List<Long> result = getFlightsBetween(LocalDate.of(2020, 10, 1).atStartOfDay(), LocalDateTime.now());
+//        System.out.println(result);
+        checkMetaData();
+    }
+
+    private static void checkMetaData() throws SQLException {
+        try (Connection connection = ConnectionManager.open()) {
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet catalogs = metaData.getCatalogs();
+            while (catalogs.next()) {
+                String catalog = catalogs.getString(1);
+                ResultSet schemas = metaData.getSchemas();
+                while (schemas.next()) {
+                    String schema = schemas.getString("TABLE_SCHEM");
+                    ResultSet tables = metaData.getTables(catalog, schema, "%", new String[] {"TABLE"});
+                    while (tables.next()) {
+                        System.out.println(tables.getString("TABLE_NAME"));
+                    }
+                }
+            }
+        }
     }
 
     private static List<Long> getFlightsBetween(LocalDateTime start, LocalDateTime end) throws SQLException {
@@ -31,6 +51,9 @@ public class JdbcRunner {
                 """;
         try (Connection connection = ConnectionManager.open();
         PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setFetchSize(50);
+            preparedStatement.setQueryTimeout(10);
+            preparedStatement.setMaxRows(100);
             System.out.println(preparedStatement);
             preparedStatement.setTimestamp(1, Timestamp.valueOf(start));
             System.out.println(preparedStatement);
