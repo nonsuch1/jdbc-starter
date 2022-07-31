@@ -27,7 +27,7 @@ public class BlobRunner {
                 FROM aircraft
                 WHERE id = ?
                 """;
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = ConnectionManager.get();
         PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, 1);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -44,7 +44,7 @@ public class BlobRunner {
                 SET image = ?
                 WHERE id = 1
                 """;
-        try (Connection connection = ConnectionManager.open();
+        try (Connection connection = ConnectionManager.get();
         PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             connection.setAutoCommit(false);
             preparedStatement.setBytes(1, Files.readAllBytes(Path.of("resources", "boeing777.jpg")));
